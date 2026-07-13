@@ -1,7 +1,6 @@
 use anyhow::{Result, anyhow};
 use chromiumoxide::{Browser, BrowserConfig};
 use futures::StreamExt;
-use tokio::time::{Duration, sleep};
 
 #[cfg(all(
     target_os = "linux",
@@ -38,9 +37,15 @@ async fn main() -> Result<()> {
         }
     });
 
-    browser.new_page("https://en.wikipedia.org").await?;
-
-    sleep(Duration::from_secs(5)).await;
+    let page = browser
+        .new_page("https://en.wikipedia.org/wiki/Main_Page")
+        .await?;
+    let featured_article = page.find_element("#mp-tfa > p").await?;
+    let featured_article_text = featured_article
+        .inner_text()
+        .await?
+        .ok_or_else(|| anyhow!("Wikipedia's featured article block has no text"))?;
+    println!("\nFrom today's featured article:\n\n{featured_article_text}");
 
     browser.close().await?;
     browser.wait().await?;
