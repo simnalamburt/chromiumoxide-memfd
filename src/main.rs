@@ -20,11 +20,9 @@ async fn main() -> Result<()> {
     let path = find_chrome_executable().await?;
     println!("chrome found: {path}");
 
-    let config = BrowserConfig::builder()
-        .chrome_executable(path)
-        .viewport(None);
+    let config = BrowserConfig::builder().chrome_executable(path);
     #[cfg(target_os = "macos")]
-    let config = config.with_head();
+    let config = config.viewport(None).with_head();
     let config = config.build().map_err(|e| anyhow!("{e}"))?;
 
     let (mut browser, mut handler) = Browser::launch(config).await?;
