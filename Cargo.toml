@@ -8,3 +8,9 @@ anyhow = "1.0.103"
 chromiumoxide = "0.9.1"
 futures = "0.3.32"
 tokio = "1.52.3"
+
+[build-dependencies]
+blake3 = "1.8.5"
+brotli = "8.0.4"
+tar = { version = "0.4.46", default-features = false }
+ureq = { version = "3.3.0", default-features = false, features = ["rustls"] }
