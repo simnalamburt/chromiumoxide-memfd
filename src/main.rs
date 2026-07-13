@@ -40,8 +40,10 @@ async fn main() -> Result<()> {
         .await?;
     let featured_article = page.find_element("#mp-tfa > p").await?;
     let featured_article_text = featured_article
-        .inner_text()
+        .string_property("textContent")
         .await?
+        .map(|text| text.trim().to_owned())
+        .filter(|text| !text.is_empty())
         .ok_or_else(|| anyhow!("Wikipedia's featured article block has no text"))?;
     println!("\nFrom today's featured article:\n\n{featured_article_text}");
 
