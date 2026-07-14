@@ -45,7 +45,7 @@ async fn main() -> Result<()> {
                 Err(error) => return Err(error.into()),
             };
             let mut file = File::from(fd);
-            let raw_fd = file.as_raw_fd();
+            let path = format!("/proc/{}/fd/{}", std::process::id(), file.as_raw_fd());
             let seals = SealFlags::GROW | SealFlags::SHRINK | SealFlags::WRITE | SealFlags::SEAL;
 
             file.write_all(EMBEDDED)?;
@@ -53,11 +53,8 @@ async fn main() -> Result<()> {
             fcntl_add_seals(&file, seals)?;
 
             let config = config
-                .chrome_executable(format!("/proc/self/fd/{raw_fd}"))
-                .arg((
-                    "browser-subprocess-path",
-                    &format!("/proc/{}/fd/{raw_fd}", std::process::id())[..],
-                ))
+                .chrome_executable(&path)
+                .arg(("browser-subprocess-path", &path[..]))
                 .arg("no-zygote")
                 .no_sandbox();
 

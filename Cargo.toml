@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.103"
-chromiumoxide = { git = "https://github.com/contentstech-com/chromiumoxide", rev = "04dcfbb0d32a9ba54938968ec1d4b10ffbbc76eb" }
+chromiumoxide = { git = "https://github.com/contentstech-com/chromiumoxide", rev = "ed7917fa6a0bceb1cd4d17d0f0097aac55a0f520" }
 futures = "0.3.32"
 tokio = "1.52.3"
 
