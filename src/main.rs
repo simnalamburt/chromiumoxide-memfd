@@ -40,7 +40,7 @@ async fn main() -> Result<()> {
 
             let fd = match memfd_create("chromium", MemfdFlags::ALLOW_SEALING | MemfdFlags::EXEC) {
                 Ok(fd) => fd,
-                // Fallback required for Linux < 6.3 which doesn't support MFD_EXEC
+                // MFD_EXEC was added in Linux 6.3; retry without it on older kernels
                 Err(Errno::INVAL) => memfd_create("chromium", MemfdFlags::ALLOW_SEALING)?,
                 Err(error) => return Err(error.into()),
             };
@@ -54,8 +54,12 @@ async fn main() -> Result<()> {
 
             let config = config
                 .chrome_executable(&path)
+                // Avoid Chromium's `/proc/self/exe` fallback, which breaks under QEMU user-mode
+                // Reference: https://gitlab.com/qemu-project/qemu/-/issues/1222
                 .arg(("browser-subprocess-path", &path[..]))
+                // Launch subprocesses directly from the memfd instead of through Chromium's zygote
                 .arg("no-zygote")
+                // Chromium requires `--no-sandbox` when `--no-zygote` is used
                 .no_sandbox();
 
             (config, Some(file))
