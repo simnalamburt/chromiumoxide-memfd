@@ -26,6 +26,7 @@ const CHROMIUM_AARCH64: ChromiumRelease = ChromiumRelease {
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("cargo::rerun-if-changed=build.rs");
+    println!("cargo::rustc-check-cfg=cfg(embedded_chromium)");
 
     if env::var("CARGO_CFG_TARGET_OS")? != "linux" {
         return Ok(());
@@ -35,6 +36,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "aarch64" => CHROMIUM_AARCH64,
         _ => return Ok(()),
     };
+    println!("cargo::rustc-cfg=embedded_chromium");
 
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").ok_or("OUT_DIR is not set")?);
     let cache_dir = &out_dir.join("chromium-cache");

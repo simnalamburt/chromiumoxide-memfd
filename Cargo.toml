@@ -9,6 +9,9 @@ chromiumoxide = "0.9.1"
 futures = "0.3.32"
 tokio = "1.52.3"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+rustix = { version = "1.1.2", features = ["fs"] }
+
 [build-dependencies]
 blake3 = "1.8.5"
 brotli = "8.0.4"
