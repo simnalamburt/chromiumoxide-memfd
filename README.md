@@ -1,5 +1,10 @@
 chromiumoxide-memfd
 ========
+PoC of how to use chromiumoxide without temporary chromium executables on
+filesystem. Instead, it uses [memfd_create(2)] to create an in-memory file
+descriptor for the chromium executable.
+
+[memfd_create(2)]: https://man7.org/linux/man-pages/man2/memfd_create.2.html
 
 ```bash
 cargo run
