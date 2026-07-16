@@ -1,0 +1,24 @@
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-26.04-arm
+    steps:
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+          components: clippy, rustfmt
+      - uses: taiki-e/install-action@cargo-shear
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: Swatinem/rust-cache@v2
+      ## There is no test
+      #- run: cargo test --workspace
+      - run: cargo clippy                               --workspace --no-deps -- -D warnings
+      - run: cargo clippy --target aarch64-apple-darwin --workspace --no-deps -- -D warnings
+      - run: cargo shear
+      - run: cargo fmt --all --check
